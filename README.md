@@ -6,8 +6,6 @@ Do you have any ideas you want to add? Submit at issues and I'll try to integrat
 
 ## Packages Needed:
  - Python 3.5+
- - Tkinter (FD1.6)
- - Git Bash (FD1.5)
  
  ## Understanding The Concepts
  - I-M-R = Data is stored on the Internet, downloaded to memory and run on RAM
