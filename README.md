@@ -4,7 +4,7 @@ Welcome to File Database! This is a place where you can store your data and requ
 File Database is constantly updating, make sure you get the latest database!
 Do you have any ideas you want to add? Submit at issues and I'll try to integrate them!
 
-## Packages Needed:
+## Requirements:
  - Python 3.5+
  
  ## Understanding The Concepts
