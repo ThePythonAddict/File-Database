@@ -7,7 +7,7 @@ may be hard accomodate all the entry boxes to display all the information at onc
 on my GitHub Page (Issues)!
     
  - @ThePythonAddict
- - https://github.com/ThePythonAddict/File-Database
+ - https://github.com/ThePythonAddict/File-Database/issues
 
 ## Reqirements:
  - Python 3.5+
