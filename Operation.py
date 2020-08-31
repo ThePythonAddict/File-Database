@@ -168,9 +168,40 @@ class DirOperation:
                         break
 
         def ReadData(dirName):
-            my_lists = []
-            for i in range(1,6):
-                new_list = []
-                for j in range(10):
-                    new_list.append(j)
-                my_lists.append(new_list)
+            filename = dirName+"\\system.baseconfig"
+            rangecounter = dirName+"\\FieldCounter.baseconfig"
+            fh = open(filename, 'r')
+            fh2 = open(rangecounter, 'r')
+            
+            reader = csv.reader(fh)
+            fields = []
+            for line in reader:
+                fields.append(line[0])
+            
+            reader2 = csv.reader(fh2)
+            for line in reader2:
+                reader2 = line[0]
+
+            lists = []
+            print(reader2)
+            for i in range(int(reader2)-1):
+                print(i+1)
+                fieldname = dirName + "\\Field" + str(i+1) + "_" + fields[i+1] + ".basefield"
+                fieldlist = []
+                fh3 = open(fieldname, 'r')
+                reader3 = csv.reader(fh3)
+                for line in reader3:
+                    fieldlist.append(line[0])
+                lists.append(fieldlist)
+                fh3.close()
+            compdata = dirName + "\\Compiled_Data.csv"
+            fieldnames = []
+            for i in range(int(reader2)-1):
+                fieldnames.append(lists[i][0])
+            print(fieldnames)
+            for i in lists:
+                 i.pop(0)
+            for i in range(len(lists[0])):
+                for j in range(len(fieldnames)):
+                    print(fieldnames[j] + ": " + lists[j][i])
+                print("==========================")
