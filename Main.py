@@ -7,7 +7,7 @@ filepath = DirOperation.firstcheck(0)
 while True:
     Directories = DirOperation.config()
     print("What Do You Want To Do?")
-    print("i = Insert New Directory | o = Open Existing Directory | d = Delete Existing Directory")
+    print("i = Insert New Directory | o = Open Existing Directory")
     a = input("- ")
 
     if a == "i":
@@ -51,15 +51,31 @@ while True:
     if a == "o":
         if len(Directories) == 0:
             print("Database Is Empty!")
-        else:  
-            query = input("Enter Database Name: ")
-            check2 = DirOperation.openDir(query, Directories)
-            if check2 == "Error":
+        else: 
+            print("What Do You Want To Do?")
+            print("i = Insert New Data | r = Read Existing Data")
+            g = input("- ")
+            if g == "i":
+                query = input("Enter Database Name: ")
+                check2 = DirOperation.openDir(query, Directories)
+                if check2 == "Error":
+                    continue
+                else:
+                    print("You Are In The '" + query + "' Database")
+                    DirOperation.InBF.NewData(query)
                 continue
-            else:
-                print("You Are In The '" + query + "' Database")
-                DirOperation.InBF.NewData(query)
-            continue
+
+            if g == "r":
+                query = input("Enter Database Name: ")
+                check2 = DirOperation.openDir(query, Directories)
+                if check2 == "Error":
+                    continue
+                else:
+                    print("Compiling Process Will Start When You Press Enter. Restart Program If You Don't Want To Continue: ")
+                    input(" ")
+                    DirOperation.InBF.ReadData(query)
+
+
 
     if a == "d":
         if len(Directories) == 0:
