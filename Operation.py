@@ -1,10 +1,24 @@
 import csv
 import os
 import shutil
+import pathlib
+import git
+import datetime
 
 class DirOperation:
 
     def firstcheck(b):
+        try:
+            fh = open('GitBackup.baseconfig','r')
+        except:
+            fh = open("Directories.baseconfig",'w')
+            fh.write("Directories")
+            fh.close()
+            fh = open("filepath.baseconfig",'w')
+            fh.write("Filepath")
+            fh.close()
+            fh = open("GitBackup.baseconfig",'w')
+            fh.close()
         fh = open('filepath.baseconfig','r')
         reader = csv.reader(fh)
         FPCheck = []
@@ -13,29 +27,58 @@ class DirOperation:
         FPCheck.pop(0)
         fh.close()
         if len(FPCheck) == 0:
-            print("Hey! Is This Your First Time? Welcome!")
-            print("Before You Start File Database")
-            print("We Need To Know Which File Path You Want To Store Your Data In")
-            while True:
-                print("Please Enter The Full File Path")
-                filepath = input("- ")
-                check = input("Is This Your Correct File Path? (Y/N): " + filepath)
+            print("Enter GitHub Repository Name (With Hyphens) (SSS = Skip)")
+            name = input("- ")
+            if name == "SSS":
+                print("Skipping")
+                filepath = str(pathlib.Path(__file__).parent.absolute())
+                fh = open('filepath.baseconfig','a')
+                fh.write("\n"+filepath)
+                fh.write("\n"+filepath + "\\")
+                fh.close()
+                fh = open('filepath.baseconfig','r')
+                reader = csv.reader(fh)
+                FPCheck = []
+                for Line in reader:
+                    FPCheck.append(Line[0])
+                FPCheck.pop(0)
+                fh.close()
+            else:
+                print("Are You Sure This Is Correct?")
+                check = input("Y/N")
                 if check == "Y":
-                    fh = open('filepath.baseconfig','a')
-                    fh.write("\n"+filepath)
-                    fh.write("\n"+filepath + "\\")
+                    fh = open("GitBackup.baseconfig", 'w')
+                    fh.write(name + "\n")
                     fh.close()
-                    fh = open('filepath.baseconfig','r')
-                    reader = csv.reader(fh)
-                    FPCheck = []
-                    for Line in reader:
-                        FPCheck.append(Line[0])
-                    FPCheck.pop(0)
-                    fh.close()
-                    return FPCheck[0]
-                    break
-                if check == "N":
-                    break
+                    print("Enter GitHub Repository Link")
+                    repo = input("- ")
+                    print("Are You Sure This Is Correct?")
+                    check = input("Y/N")
+                    if check == "Y":
+                        fh = open("GitBackup.baseconfig", 'a')
+                        fh.write(repo)
+                        fh.close()
+                        print("Cloning Repository. Please Wait")
+                        try:
+                            git.Git().clone(repo)
+                        except:
+                            print("There Was An Error Downloading The Repository")
+                        filepath = str(pathlib.Path(__file__).parent.absolute())
+                        fh = open('filepath.baseconfig','a')
+                        fh.write("\n"+filepath + "\\"+name)
+                        fh.write("\n"+filepath + "\\"+name+"\\")
+                        fh.close()
+                        fh = open('filepath.baseconfig','r')
+                        reader = csv.reader(fh)
+                        FPCheck = []
+                        for Line in reader:
+                            FPCheck.append(Line[0])
+                        FPCheck.pop(0)
+                        fh.close()
+                    elif check == "N":
+                        pass
+                elif check == "N":
+                    pass
         else:
             fh = open('filepath.baseconfig','r')
             reader = csv.reader(fh)
@@ -56,15 +99,15 @@ class DirOperation:
         return Directories
 
     def makeDir(newdir, parent_dir):
-        flag = True
+        flag = False
         newpath = os.path.join(parent_dir,newdir)
         if not os.path.exists(newpath):
             os.makedirs(newpath)
             fh = open('Directories.baseconfig','a')
-            fh.write("\n" + str(newdir))
+            fh.write("\n"+str(newdir))
             fh.close()
             print("Database Folder Created!")
-            filename = DirOperation.writeDir(newdir)
+            filename = DirOperation.writeDir(newpath)
             return newdir, filename
 
 
@@ -99,9 +142,16 @@ class DirOperation:
             return Flag
     
     def writeDir(dirName):
-        filename = str(dirName) + "\system.baseconfig"
-        fh = open(filename,'w')
-        fh.write("Fields")
+        fh = open(str(dirName)+"/system.baseconfig",'w')
+        fh.write("Fields\n")
+        fh.close()
+        fh = open(str(dirName)+"/filepath.baseconfig",'w')
+        fh.write("Filepath\n")
+        fh.close()
+        fh = open(str(dirName)+"/subfolders.baseconfig",'w')
+        fh.write("Subfolders\n")
+        fh.close()
+        fh = open(str(dirName)+"/FieldCounter.baseconfig",'w')
         fh.close()
         return dirName
     
@@ -109,16 +159,17 @@ class DirOperation:
     def createField(dirName,fieldName,a):
             flag = False
             System = DirOperation.systemconfig(dirName)
+            repo = DirOperation.firstcheck(1)
             if System == "Error":
                 return System
             else:
-                filename = str(dirName) +"\Field" + str(a) + "_" + str(fieldName) + ".basefield"
+                filename = str(repo + dirName) +"\Field" + str(a) + "_" + str(fieldName) + ".basefield"
                 fh = open(filename,'w')
                 fh.write(fieldName)
                 fh.close()
-                filename2 = str(dirName) + "\system.baseconfig"
+                filename2 = str(repo + dirName) + "\system.baseconfig"
                 fh2 = open(filename2,'a')
-                fh2.write("\n"+str(fieldName))
+                fh2.write(str(fieldName)+"\n")
                 fh2.close()
                 return "Success"
 
@@ -156,9 +207,10 @@ class DirOperation:
                 while True:
                     check = input("- ")
                     if check == "Y":
+                        repo = DirOperation.firstcheck(1)
                         for i in Fields:
                             filename = dirName + "\Field" + str(c) + "_" + str(i) + ".basefield"
-                            fh = open(filename, 'a')
+                            fh = open(repo+filename, 'a')
                             fh.write("\n"+inputs[c-1])
                             fh.close()
                             c = c+1
@@ -205,3 +257,83 @@ class DirOperation:
                 for j in range(len(fieldnames)):
                     print(fieldnames[j] + ": " + lists[j][i])
                 print("==========================")
+        
+        def NewDir(dirMain,dirSub):
+            os.makedirs(dirMain+"/"+dirSub)
+            fh = open("filepath.baseconfig",'r')
+            reader = csv.reader(fh)
+            filepath = []
+            for line in reader:
+                filepath.append(line[0])
+            fh.close()
+            fh = open(dirMain+"/filepath.baseconfig",'a')
+            fh.write(filepath[2]+dirMain+"\\"+dirSub+"\n")
+            fh.close()
+            fh = open(dirMain+"/subfolders.baseconfig",'a')
+            fh.write(dirSub+"\n")
+            fh.close()
+
+        def GitBackup():
+            # try:
+                fh = open("GitBackup.baseconfig",'r')
+                reader = csv.reader(fh)
+                repo = []
+                for line in reader:
+                    repo.append(line[0])
+                if len(repo) == 0:
+                    print("You Need To Add A GitHub Repository Before Using This")
+                    print("Would You Like To Add Your GitHub Repository? (Y/N)")
+                    check = input("- ")
+                    if check == "Y":
+                        print("Enter GitHub Repository Name (With Hyphens)")
+                        name = input("- ")
+                        print("Are You Sure This Is Correct?")
+                        check = input("Y/N")
+                        if check == "Y":
+                            fh = open("GitBackup.baseconfig", 'w')
+                            fh.write(name + "\n")
+                            fh.close()                        
+                        print("Enter GitHub Repository Link")
+                        repo = input("- ")
+                        print("Are You Sure This Is Correct?")
+                        check = input("Y/N")
+                        if check == "Y":
+                            fh = open("GitBackup.baseconfig", 'a')
+                            fh.write(repo)
+                            fh.close()
+                else:
+                    fh = open("GitBackup.baseconfig",'r')
+                    gitrepo = []
+                    reader = csv.reader(fh)
+                    for line in reader:
+                        gitrepo.append(line[0])
+                    fh.close()
+                    repo = git.Repo(gitrepo[0])
+                    fh = open("Directories.baseconfig",'r')
+                    directories = []
+                    reader = csv.reader(fh)
+                    for line in reader:
+                        directories.append(line[0])
+                    fh.close()
+                    directories.pop(0)
+                    totalfiles = []
+                    for i in directories:
+                        fields = []
+                        fh = open(gitrepo[0]+"/"+ i + "/system.baseconfig",'r')
+                        reader = csv.reader(fh)
+                        for line in reader:
+                            fields.append(line[0])
+                        fh.close()
+                        fields.pop(0)
+                        for j in range(len(fields)):
+                            totalfiles.append(i +"/Field"+str(j+1)+"_"+fields[j]+".basefield")
+                        totalfiles.append(i + "/system.baseconfig")
+                        totalfiles.append(i + "/subfolders.baseconfig")
+                        totalfiles.append(i + "/filepath.baseconfig")
+                        totalfiles.append(i + "/FieldCounter.baseconfig")
+                    print(totalfiles)
+                    repo.index.add(totalfiles)
+                    repo.index.commit("Database Backed Up By File Database 1.8")
+                    origin = repo.remote('origin')
+                    origin.push()
+                    print("Database Backup Successfull")
