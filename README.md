@@ -4,6 +4,7 @@ it will push the data! Have any issues? DM me on Discord or on Issues!
 
 
 @ThatCodeAddict#7289
+
 https://github.com/ThePythonAddict/File-Database/issues
 
 Reqirements:
