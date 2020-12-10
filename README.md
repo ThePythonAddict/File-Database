@@ -4,11 +4,6 @@ Welcome to File Database 1.7.2 Alpha. Just like 1.7.1, there can be multiple dat
 But this time, you can back up your data to GitHub! Just insert a GitHub Repository and
 it will push the data!
 
-## Want to see the demo?
-Go To Useless Repository
-
-https://github.com/ThatCodeAddict/UR
-
 
 ## Have any issues? DM me on Discord or on Issues!
 
